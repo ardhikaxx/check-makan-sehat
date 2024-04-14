@@ -3,11 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Eat Well Analyzer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-    <main></main>
+    <section class="bg-light text-center py-1">
+        <div class="container pb-2 pt-5">
+            <div class="pb-5 pt-5 row">
+                <div class="col-lg-9 col-xl-8 ms-auto me-auto pb-5 pt-5">
+                    <h1 class="display-3 fw-bold mb-3">Jelajahi Kandungan Gizi Makananmu</h1>
+                    <p class="lead mb-4">Segera temukan informasi nutrisi yang tersembunyi dalam makanan harianmu. <br> Mulailah perjalanan sehatmu sekarang!</p>
+                    <button class="btn btn-lg btn-primary">Mulai Cek Sekarang</button>
+                </div>
+            </div>
+        </div>
+    </section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector('.btn-primary').addEventListener('click', function () {
+                swal({
+                    text: 'Masukkan nama makanan dalam bahasa Inggris:',
+                    content: "input",
+                    button: {
+                        text: "Cek",
+                        closeModal: false,
+                    },
+                })
+                .then((inputValue) => {
+                    if (inputValue === "") {
+                        swal("Anda harus memasukkan makanan!", {
+                            icon: "error",
+                        });
+                        return;
+                    }
+        
+                    // Kirim permintaan ke API FoodData Central USDA
+                    fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?query=${inputValue}&api_key=qyV60JbMIVfjPB0QeLnQ90vGKtmoe0UQjzigyLdS`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.foods.length === 0) {
+                            swal("Makanan tidak ditemukan!", {
+                                icon: "error",
+                            });
+                        } else {
+                            const foodItem = data.foods[0];
+                            const nutrition = foodItem.foodNutrients;
+        
+                            let nutrientValue = "";
+                            nutrition.forEach(nutrient => {
+                                const value = nutrient.value || 0;
+                                const unit = nutrient.unit || "";
+                                nutrientValue += `${nutrient.nutrientName}: ${value}${unit}\n`;
+                            });
+        
+                            swal({
+                                title: "Hasil Cek Nutrisi",
+                                text: `Makanan "${foodItem.description}" memiliki nilai gizi:\n${nutrientValue}`,
+                                icon: "success",
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        swal("Terjadi kesalahan saat memproses permintaan.", {
+                            icon: "error",
+                        });
+                    });
+                });
+            });
+        });        
+    </script>
 </body>
 </html>
