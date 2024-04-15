@@ -27,16 +27,25 @@ document.addEventListener("DOMContentLoaded", function () {
                     const foodItem = data.foods[0];
                     const nutrition = foodItem.foodNutrients;
 
-                    let nutrientValue = "";
+                    let tableHtml = "<table style='margin:auto; border-collapse: collapse; text-align: center;'><tr><th style='border: 1px solid black; padding: 8px;'>Nama Nutrisi</th><th style='border: 1px solid black; padding: 8px;'>Nilai</th></tr>";
                     nutrition.forEach(nutrient => {
                         const value = nutrient.value || 0;
                         const unit = nutrient.unit || "";
-                        nutrientValue += `${nutrient.nutrientName}: ${value}${unit}\n`;
+                        tableHtml += `<tr><td style='border: 1px solid black; padding: 8px;'>${nutrient.nutrientName}</td><td style='border: 1px solid black; padding: 8px;'>${value}</td></tr>`;
                     });
+                    tableHtml += "</table>";
 
                     swal({
                         title: "Hasil Cek Nutrisi",
-                        text: `Makanan "${foodItem.description}" memiliki nilai gizi:\n${nutrientValue}`,
+                        content: {
+                            element: "div",
+                            attributes: {
+                                innerHTML: `
+                                    <p style='margin-bottom: 16px;'>Makanan "${foodItem.description}" memiliki nilai gizi:</p>
+                                    ${tableHtml}
+                                `
+                            }
+                        },
                         icon: "success",
                     });
                 }
