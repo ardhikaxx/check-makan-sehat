@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelector('.btn-primary').addEventListener('click', function () {
+    document.querySelector('.btn-check').addEventListener('click', function () {
         swal({
             text: 'Masukkan nama makanan dalam bahasa Inggris:',
             content: "input",
